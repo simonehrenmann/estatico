@@ -110,6 +110,14 @@ gulp.task(taskName, function(cb) {
 				{
 					test: /\.css$/,
 					loader: 'style-loader!css-loader'
+				},
+				{
+					test: /(\.js|\.jsx)$/,
+					exclude: /node_modules/,
+					loader: 'babel-loader',
+					query: {
+						presets: ['es2015', 'react']
+					}
 				}
 			]
 		},
@@ -131,6 +139,18 @@ gulp.task(taskName, function(cb) {
 				return key.replace(path.join('..', 'node_modules'), 'node_modules');
 			}),
 
+			module: {
+				loaders: [
+					{
+						test: /(\.js|\.jsx)$/,
+						exclude: /node_modules/,
+						loader: 'babel-loader',
+						query: {
+							presets: ['es2015', 'react']
+						}
+					}
+				]
+			},
 			externals: {
 				'qunitjs': 'QUnit',
 				'jquery': 'jQuery'

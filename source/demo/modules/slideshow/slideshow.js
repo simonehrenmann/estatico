@@ -5,8 +5,6 @@
  * @copyright Unic AG
  */
 
-'use strict';
-
 import $ from 'jquery';
 import SuperClass from '../../../assets/js/helpers/module';
 import globalEvents from '../../../assets/js/helpers/events';
@@ -218,7 +216,7 @@ SuperClass.register(Module, name, {
 	events: events
 });
 
-module.exports = {
+export default {
 	Module: Module,
 	initEvents: ['ready', 'ajaxload'],
 	events: events

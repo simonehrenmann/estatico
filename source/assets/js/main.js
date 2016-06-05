@@ -1,9 +1,12 @@
 import $ from 'jquery';
 import events from './helpers/events.js';
 import mediaqueries from './helpers/mediaqueries.js';
+
 import skiplinks from '../../demo/modules/skiplinks/skiplinks.js';
 import slideshow from '../../demo/modules/slideshow/slideshow.js';
 import react from '../../demo/modules/react/react.jsx';
+
+// *autoinsertmodule*
 
 var modules = {
 		skiplinks: skiplinks,

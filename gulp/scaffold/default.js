@@ -46,9 +46,9 @@ var taskName = 'scaffold',
 		},
 		registerScript: {
 			src: './source/assets/js/main.js',
-			insertionPoint: ' * //*autoinsertmodule*',
-			insertionPrefix: ' * @requires ',
-			insertionSuffix: '.js\n'
+			insertionPoint: '\n// *autoinsertmodule*',
+			insertionPrefix: 'import newModule from \'',
+			insertionSuffix: '.js\';\n'
 		},
 
 		// Generated dynamically

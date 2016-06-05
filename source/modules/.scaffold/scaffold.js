@@ -5,13 +5,11 @@
  * @copyright
  */
 
-'use strict';
+import $ from 'jquery';
+import SuperClass from '../../assets/js/helpers/module';
 
-var $ = require('jquery'),
-	SuperClass = require('../../assets/js/helpers/module');
-
-// globalEvents = require('../../assets/js/helpers/events'),
-// mediaqueries = require('../../assets/js/helpers/mediaqueries');
+// import globalEvents from '../../assets/js/helpers/events';
+// import mediaqueries from '../../assets/js/helpers/mediaqueries';
 
 var name = '{{name}}',
 	events = {
@@ -77,7 +75,7 @@ SuperClass.register(Module, name, {
 	events: events
 });
 
-module.exports = {
+export default {
 	Module: Module,
 	initEvents: ['ready', 'ajaxload'],
 	events: events

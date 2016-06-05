@@ -1,7 +1,5 @@
-'use strict';
-
-var QUnit = require('qunitjs'),
-	$ = require('jquery');
+import $ from 'jquery';
+import QUnit from 'qunitjs';
 
 var moduleName = 'slideshow',
 	$node = $('.mod_' + moduleName).eq(0),

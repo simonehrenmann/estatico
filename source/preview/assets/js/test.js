@@ -3,15 +3,13 @@
  *
  */
 
-'use strict';
-
-var $ = require('jquery'),
-	QUnit = require('qunitjs'),
-	css = require('qunitjs/qunit/qunit.css');
+import $ from 'jquery';
+import QUnit from 'qunitjs';
+import 'qunitjs/qunit/qunit.css';
 
 QUnit.config.autostart = false;
 
-$(document).on('ready', function(){
+$(document).on('ready', function() {
 	var $container = $('#qunit'),
 		$button = $('<button>Run QUnit tests</button>'),
 		startTests = function() {
