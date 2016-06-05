@@ -4,9 +4,7 @@
  * Start the debugging with ctrl+a (same to switch to next mode)
  */
 
-'use strict';
-
-module.exports = {
+export default {
 	mode: null,
 	dataAttribute: 'estaticoDev',
 	className: 'estatico_dev_overlay',

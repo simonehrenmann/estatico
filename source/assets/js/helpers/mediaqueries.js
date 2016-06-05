@@ -4,7 +4,7 @@
  * @license APLv2
  *
  * @example
- * var mediaqueries = require('./mediaqueries.js');
+ * import mediaqueries from './mediaqueries.js';
  *
  * // Listen to custom (debounced) event to react to viewport changes:
  * $(document).on(mediaqueries.event.key, function(event, prevBreakpoint, currentBreakpoint) {
@@ -24,10 +24,8 @@
  * }
  */
 
-'use strict';
-
-var $ = require('jquery'),
-	events = require('./events');
+import $ from 'jquery';
+import events from './events';
 
 function parseCssProperty(str) {
 	return $.parseJSON($.trim(str.replace(/^('|")|(\\)|('|")$/g, '')));
@@ -87,7 +85,7 @@ function query(options) {
 	}
 }
 
-module.exports = {
+export default {
 	query: query,
 	breakpoints: breakpoints,
 	event: {

@@ -1,6 +1,6 @@
-'use strict';
+import estatico from './namespace.js';
 
-module.exports = (function() {
+export default (function() {
 
 	// once cached, the css file is stored on the client forever unless
 	// the URL below is changed. Any change will invalidate the cache
@@ -33,9 +33,8 @@ module.exports = (function() {
 			var xhr,
 				stylesheet;
 
+			// if this is an older browser
 			if (!window.localStorage || !window.XMLHttpRequest) {
-				// if this is an older browser
-
 				stylesheet = document.createElement('link');
 				stylesheet.href = cssHref;
 				stylesheet.rel = 'stylesheet';
@@ -47,34 +46,31 @@ module.exports = (function() {
 				// this requires a good expires header on the server
 				document.cookie = 'fontCssCache';
 
-			} else {
-				// if this isn't an old browser
-
+			// if this isn't an old browser
+			} else if (fileIsCached(cssHref)) {
 				// use the cached version if we already have it
-				if (fileIsCached(cssHref)) {
-					injectRawStyle(localStorage.fontCssCache);
-				} else {
-					// otherwise, load it with ajax
-					xhr = new XMLHttpRequest();
-					xhr.open('GET', cssHref, true);
+				injectRawStyle(localStorage.fontCssCache);
+			} else {
+				// otherwise, load it with ajax
+				xhr = new XMLHttpRequest();
+				xhr.open('GET', cssHref, true);
 
-					// cater for IE8 which does not support addEventListener or attachEvent on XMLHttpRequest
-					xhr.onreadystatechange = function() {
-						if (xhr.readyState === 4) {
+				// cater for IE8 which does not support addEventListener or attachEvent on XMLHttpRequest
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState === 4) {
 
-							// once we have the content, quickly inject the css rules
-							injectRawStyle(xhr.responseText);
+						// once we have the content, quickly inject the css rules
+						injectRawStyle(xhr.responseText);
 
-							// and cache the text content for further use
-							// notice that this overwrites anything that might have already been previously cached
-							localStorage.fontCssCache = xhr.responseText;
-							localStorage.fontCssCacheFile = cssHref;
-						}
+						// and cache the text content for further use
+						// notice that this overwrites anything that might have already been previously cached
+						localStorage.fontCssCache = xhr.responseText;
+						localStorage.fontCssCacheFile = cssHref;
+					}
 
-					};
+				};
 
-					xhr.send();
-				}
+				xhr.send();
 			}
 		};
 

@@ -37,6 +37,11 @@ gulp.task(taskName, function(cb) {
 
 			if (skipBuild) {
 				runTasks = _.without(runTasks, 'build');
+
+				// Start webpack watcher by running the main JS task if specified
+				if (util.env['webpack-watch']) {
+					runTasks.unshift('js');
+				}
 			}
 
 			runSequence.apply(this, runTasks);

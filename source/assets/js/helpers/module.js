@@ -4,10 +4,8 @@
  * @license APLv2
  */
 
-'use strict';
-
-var $ = require('jquery'),
-	uniqueId = require('lodash.uniqueid');
+import $ from 'jquery';
+import uniqueId from 'lodash.uniqueid';
 
 /**
  * Helper class
@@ -164,4 +162,4 @@ $.extend(true, estatico, {
 	}
 });
 
-module.exports = SuperClass;
+export default SuperClass;

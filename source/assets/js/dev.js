@@ -1,8 +1,6 @@
-'use strict';
-
-var bows = require('bows'),
-	a11y = require('./helpers/a11y.js'),
-	inspector = require('./helpers/inspector.js');
+import bows from 'bows';
+import a11y from './helpers/a11y.js';
+import inspector from './helpers/inspector.js';
 
 // Enable by default
 // Remove these lines and run "localStorage.removeItem('debug');" to disable

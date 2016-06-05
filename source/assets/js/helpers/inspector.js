@@ -4,9 +4,7 @@
  * Start inspection with ctrl+m (same to switch off module inspection)
  */
 
-'use strict';
-
-module.exports = {
+export default {
 	mode: null,
 	dataAttribute: 'estaticoDev',
 	className: 'estatico_dev_overlay',

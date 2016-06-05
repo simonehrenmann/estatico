@@ -4,7 +4,7 @@
  * @license APLv2
  *
  * @example
- * var globalEvents = require('./events.js');
+ * import globalEvents from './events.js';
  *
  * // Listen to debounced scroll event:
  * $(document}.on(globalEvents.scroll.key, function(event, originalEvent) {
@@ -12,17 +12,15 @@
  * });
  */
 
-'use strict';
-
-var $ = require('jquery'),
-	debounce = require('lodash.debounce');
+import $ from 'jquery';
+import debounce from 'lodash.debounce';
 
 var interval = {
 		resize: 50,
 		scroll: 50
 	};
 
-module.exports = {
+export default {
 	resize: {
 		key: 'debouncedresize.estatico',
 		attach: function() {

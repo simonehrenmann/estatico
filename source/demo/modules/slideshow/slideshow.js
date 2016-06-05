@@ -7,14 +7,12 @@
 
 'use strict';
 
-var $ = require('jquery'),
-	SuperClass = require('../../../assets/js/helpers/module'),
-	globalEvents = require('../../../assets/js/helpers/events'),
-	mediaqueries = require('../../../assets/js/helpers/mediaqueries'),
-	templates = {
-		nav: require('./_slideshow_nav.js.hbs'),
-		slide: require('./_slideshow_slide.js.hbs')
-	};
+import $ from 'jquery';
+import SuperClass from '../../../assets/js/helpers/module';
+import globalEvents from '../../../assets/js/helpers/events';
+import mediaqueries from '../../../assets/js/helpers/mediaqueries';
+import navTemplate from './_slideshow_nav.js.hbs';
+import slideTemplate from './_slideshow_slide.js.hbs';
 
 var name = 'slideshow',
 	events = {
@@ -76,7 +74,7 @@ Module.prototype.init = function() {
 
 	this.$wrapper = this.$element.find(this.options.domSelectors.slides);
 	this.$slides = this.$element.find(this.options.domSelectors.slide);
-	this.$nav = $(templates.nav(this.data));
+	this.$nav = $(navTemplate(this.data));
 
 	this.$element
 		.append(this.$nav)
@@ -178,7 +176,7 @@ Module.prototype.next = function() {
  * @public
  */
 Module.prototype.add = function(data) {
-	var slide = templates.slide(data),
+	var slide = slideTemplate(data),
 		$slide = $(slide);
 
 	this.$slides = this.$slides.add($slide);

@@ -7,11 +7,15 @@
  * @copyright
  */
 
-import $ from 'jQuery';
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-ReactDOM.render(
-	<h1>Hello React world!</h1>,
-	$('[data-init~="react"]').get(0)
-);
+var container = $('[data-init~="react"]');
+
+if (container.length) {
+	ReactDOM.render(
+		<h1>Hello React world!</h1>,
+		container[0]
+	);
+}

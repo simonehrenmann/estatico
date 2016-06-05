@@ -71,7 +71,6 @@
     "gulp-uglify": "1.2.0",
     "gulp-util": "3.0.4",
     "gulp-watch": "4.2.4",
-    "gulp-webpack-sourcemaps": "git+https://github.com/skyrpex/gulp-webpack-sourcemaps.git#ebfae3c57845a107458dc179bcc7ac8a05f5df1b",
     "gulp.spritesmith": "3.6.1",
     "handlebars": "3.0.3",
     "handlebars-helpers": "0.5.8",
@@ -100,7 +99,7 @@
     "through2": "2.0.0",
     "vinyl-buffer": "1.0.0",
     "vinyl-paths": "1.0.0",
-    "webpack": "1.12.14"
+    "webpack": "1.13.1"
   },
   "scripts": {
     "test": "mocha --ui exports"
