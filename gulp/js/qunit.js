@@ -98,42 +98,38 @@ gulp.task(taskName, function(cb) {
 	});
 
 	// Prepare test-config
-	webpack({
-		// Create a map of entries, i.e. {'assets/js/main': './source/assets/js/main.js'}
-		entry: helpers.webpack.getEntries([taskConfig.srcQUnit], taskConfig.srcBase),
-		module: {
-			loaders: [
-				{
-					test: /qunit\.js$/,
-					loader: 'expose?QUnit'
-				},
-				{
-					test: /\.css$/,
-					loader: 'style-loader!css-loader'
-				},
-				{
-					test: /(\.js|\.jsx)$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader',
-					query: {
-						presets: ['es2015', 'react']
-					}
-				}
-			]
-		},
-		externals: {
-			'jquery': 'jQuery'
-		},
-		output: {
-			path: taskConfig.destTests,
-			filename: '[name].js'
-		}
-	}, function(err, stats) {
-		helpers.webpack.log(err, stats, taskName);
-
-		// Copy test files
-		webpack({
+	webpack([
+		{
 			// Create a map of entries, i.e. {'assets/js/main': './source/assets/js/main.js'}
+			entry: helpers.webpack.getEntries([taskConfig.srcQUnit], taskConfig.srcBase),
+			module: {
+				loaders: [
+					{
+						test: /qunit\.js$/,
+						loader: 'expose?QUnit'
+					},
+					{
+						test: /\.css$/,
+						loader: 'style-loader!css-loader'
+					},
+					{
+						test: /(\.js|\.jsx)$/,
+						exclude: /node_modules/,
+						loader: 'babel-loader',
+						query: {
+							presets: ['es2015', 'react']
+						}
+					}
+				]
+			},
+			externals: {
+				'jquery': 'jQuery'
+			},
+			output: {
+				path: taskConfig.destTests,
+				filename: '[name].js'
+			}
+		}, {
 			entry: helpers.webpack.getEntries(srcTests, taskConfig.srcBase, function(key) {
 				// Move files from node_modules into target dir, too
 				return key.replace(path.join('..', 'node_modules'), 'node_modules');
@@ -159,62 +155,62 @@ gulp.task(taskName, function(cb) {
 				path: taskConfig.destTests,
 				filename: '[name].js'
 			}
-		}, function(err, stats) {
-			helpers.webpack.log(err, stats, taskName);
+		}
+	], function(err, stats) {
+		helpers.webpack.log(err, stats, taskName);
 
-			gulp.src(taskConfig.srcTemplates, {
-				base: taskConfig.srcTemplatesBase
-			})
-				.pipe(tap(function(file) {
-					var content = file.contents.toString(),
-						relPathPrefix = path.relative(file.path, taskConfig.srcTemplatesBase),
-						searchstring = taskConfig.srcQUnit;
+		gulp.src(taskConfig.srcTemplates, {
+			base: taskConfig.srcTemplatesBase
+		})
+			.pipe(tap(function(file) {
+				var content = file.contents.toString(),
+					relPathPrefix = path.relative(file.path, taskConfig.srcTemplatesBase),
+					searchstring = taskConfig.srcQUnit;
 
-					relPathPrefix = relPathPrefix
-						.replace(new RegExp('\\' + path.sep, 'g'), '/') // Normalize path separator
-						.replace(/\.\.$/, ''); // Remove trailing ..
+				relPathPrefix = relPathPrefix
+					.replace(new RegExp('\\' + path.sep, 'g'), '/') // Normalize path separator
+					.replace(/\.\.$/, ''); // Remove trailing ..
 
-					// Ignore files without a QUnit script reference
-					searchstring = searchstring.replace(taskConfig.srcBase, '');
-					if (content.search(searchstring) === -1) {
-						ignoreFiles.push(file.path);
+				// Ignore files without a QUnit script reference
+				searchstring = searchstring.replace(taskConfig.srcBase, '');
+				if (content.search(searchstring) === -1) {
+					ignoreFiles.push(file.path);
 
-						return;
-					}
+					return;
+				}
 
-					// Make paths relative to build directory, add base tag
-					var regex = relPathPrefix.replace(new RegExp(/\./g), '\\.').replace(new RegExp(/\//g), '\\/');
+				// Make paths relative to build directory, add base tag
+				var regex = relPathPrefix.replace(new RegExp(/\./g), '\\.').replace(new RegExp(/\//g), '\\/');
 
-					content = content
-						.replace('<head>', '<head><base href="' + path.resolve(taskConfig.srcTemplatesBase) + path.sep + '">')
-						.replace(new RegExp(regex, 'g'), '');
+				content = content
+					.replace('<head>', '<head><base href="' + path.resolve(taskConfig.srcTemplatesBase) + path.sep + '">')
+					.replace(new RegExp(regex, 'g'), '');
 
-					// Re-enable autostart
-					content = content.replace('</body>', '<script>QUnit.config.autostart = true;</script></body>');
+				// Re-enable autostart
+				content = content.replace('</body>', '<script>QUnit.config.autostart = true;</script></body>');
 
-					// Insert polyfills for PhantomJS
-					polyfills.forEach(function(filePath) {
-						filePath = path.join(polyfillPathPrefix, filePath);
+				// Insert polyfills for PhantomJS
+				polyfills.forEach(function(filePath) {
+					filePath = path.join(polyfillPathPrefix, filePath);
 
-						content = content.replace('<script', '<script src="' + filePath + '"></script><script');
-					});
-
-					file.contents = new Buffer(content);
-				}))
-				.pipe(ignore.exclude(function(file) {
-					return _.indexOf(ignoreFiles, file.path) !== -1;
-				}))
-
-				// Move them outside /build/ for some weird phantomJS reason
-				.pipe(gulp.dest(taskConfig.destTemplates))
-
-				// Run tests in phantomJS
-				.pipe(runTests().on('error', helpers.errors))
-				.on('end', function() {
-					// Remove .qunit tmp folder
-					del(taskConfig.destTemplates, cb);
+					content = content.replace('<script', '<script src="' + filePath + '"></script><script');
 				});
-		});
+
+				file.contents = new Buffer(content);
+			}))
+			.pipe(ignore.exclude(function(file) {
+				return _.indexOf(ignoreFiles, file.path) !== -1;
+			}))
+
+			// Move them outside /build/ for some weird phantomJS reason
+			.pipe(gulp.dest(taskConfig.destTemplates))
+
+			// Run tests in phantomJS
+			.pipe(runTests().on('error', helpers.errors))
+			.on('end', function() {
+				// Remove .qunit tmp folder
+				del(taskConfig.destTemplates, cb);
+			});
 	});
 });
 
