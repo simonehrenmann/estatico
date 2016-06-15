@@ -36,11 +36,14 @@ gulp.task(taskName, function(cb) {
 				];
 
 			if (skipBuild) {
+				util.env.skipBuild = true;
+
+				// Remove build task from list
 				runTasks = _.without(runTasks, 'build');
 
-				// Start webpack watcher by running the main JS task if specified
+				// Start webpack watcher by running corresponding tasks explicitly
 				if (util.env['webpack-watch']) {
-					runTasks.unshift('js');
+					runTasks.unshift(['js', 'js:qunit']);
 				}
 			}
 
