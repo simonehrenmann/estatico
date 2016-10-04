@@ -5,18 +5,18 @@
  */
 
 $pngsprite: (
-	{{#each images}}"{{@key}}": (
+		{% for key, image in images %}"{{key}}": (
 		"position": (
-			"x": {{this.position.x}},
-			"y": {{this.position.y}}
+			"x": {{image.position.x}},
+			"y": {{image.position.y}}
 		),
 		"dimensions": (
-			"x": {{this.dimensions.x}},
-			"y": {{this.dimensions.y}}
+			"x": {{image.dimensions.x}},
+			"y": {{image.dimensions.y}}
 		),
-		"url": "{{this.url}}"
+		"url": "{{image.url}}"
 	),
-	{{/each}}
+	{% endfor %}
 );
 
 

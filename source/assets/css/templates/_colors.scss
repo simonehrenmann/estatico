@@ -1,6 +1,6 @@
 /**
  * Colors imported from ColorSchemer export
  */
-
-{{#each colors}}$color{{capitalize name}}: {{color}};
-{{/each}}
+/* */
+{% for color in colors %}$color{{color.name}}: {{color.color}};
+{% endfor %}
