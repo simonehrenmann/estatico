@@ -8,7 +8,7 @@ var _ = require('lodash'),
 var data = _.merge(defaultData, {
 		meta: {
 			title: 'Demo: Babel: React',
-			code: dataHelper.getTemplateCode('react.hbs'),
+			code: dataHelper.getTemplateCode('react.twig'),
 			documentation: dataHelper.getDocumentation('react.md')
 		}
 	});
