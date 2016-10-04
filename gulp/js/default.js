@@ -55,7 +55,6 @@ var taskName = 'js',
 			entry: helpers.webpack.getEntries(src, config.srcBase),
 			resolve: {
 				alias: {
-					handlebars: 'handlebars/runtime.js'
 
 					// jquery: path.join(__dirname, '../../node_modules/jquery/dist/jquery.js')
 				}
@@ -63,16 +62,8 @@ var taskName = 'js',
 			module: {
 				loaders: [
 					{
-						test: /\.hbs$/,
-						loader: 'handlebars-loader'
-					},
-					{
 						test: /jquery\.js$/,
 						loader: 'expose?jQuery'
-					},
-					{
-						test: /handlebars\.js$/,
-						loader: 'expose?Handlebars'
 					},
 					{
 						test: /(\.js|\.jsx)$/,

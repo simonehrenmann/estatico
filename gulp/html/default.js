@@ -2,7 +2,7 @@
 
 /**
  * @function `gulp html`
- * @desc Compile Handlebars templates to HTML. Use `.data.js` files for - surprise! - data.
+ * @desc Compile Twig templates to HTML. Use `.data.js` files for - surprise! - data.
  */
 
 var gulp = require('gulp');
@@ -10,29 +10,30 @@ var gulp = require('gulp');
 var taskName = 'html',
 	taskConfig = {
 		src: [
-			'./source/*.hbs',
-			'./source/pages/**/*.hbs',
-			'./source/demo/pages/**/*.hbs',
-			'./source/modules/**/!(_)*.hbs',
-			'./source/demo/modules/**/!(_)*.hbs',
-			'./source/preview/styleguide/*.hbs'
+			'./source/*.twig',
+			'./source/pages/**/*.twig',
+			'./source/demo/pages/**/*.twig',
+			'./source/modules/**/!(_)*.twig',
+			'./source/demo/modules/**/!(_)*.twig',
+			'./source/preview/styleguide/*.twig'
 		],
-		srcModulePreview: './source/preview/layouts/module.hbs',
-		partials: [
-			'source/layouts/*.hbs',
-			'source/modules/**/*.hbs',
-			'source/demo/modules/**/*.hbs',
-			'source/preview/**/*.hbs'
+		srcBase: './source',
+		srcModulePreview: './source/preview/layouts/module.twig',
+		includes: [
+			'source/layouts/*.twig',
+			'source/modules/**/*.twig',
+			'source/demo/modules/**/*.twig',
+			'source/preview/**/*.twig'
 		],
 		dest: './build/',
 		watch: [
-			'source/*.hbs',
-			'source/layouts/*.hbs',
-			'source/pages/**/*.hbs',
-			'source/demo/pages/**/*.hbs',
-			'source/modules/**/*.hbs',
-			'source/demo/modules/**/*.hbs',
-			'source/preview/**/*.hbs',
+			'source/*.twig',
+			'source/layouts/*.twig',
+			'source/pages/**/*.twig',
+			'source/demo/pages/**/*.twig',
+			'source/modules/**/*.twig',
+			'source/demo/modules/**/*.twig',
+			'source/preview/**/*.twig',
 			'source/data/**/*.data.js',
 			'source/pages/**/*.data.js',
 			'source/demo/pages/**/*.data.js',
@@ -43,7 +44,8 @@ var taskName = 'html',
 			'source/demo/modules/**/*.md',
 			'source/assets/css/data/colors.html'
 		]
-	};
+	},
+	includeCache = {};
 
 gulp.task(taskName, function(cb) {
 	var helpers = require('require-dir')('../../helpers'),
@@ -58,17 +60,19 @@ gulp.task(taskName, function(cb) {
 
 		// Format HTML (disabled due to incorrect resulting indentation)
 		// prettify = require('gulp-prettify'),
-		_ = require('lodash'),
-		handlebars = require('gulp-hb'),
-		Handlebars = require('handlebars');
+		_ = require('lodash');
 
 	var modulePreviewTemplate;
+
+	helpers.twig.registerIncludes(taskConfig.includes, includeCache);
 
 	gulp.src(taskConfig.src, {
 			base: './source'
 		})
+		.pipe(plumber())
 		.pipe(tap(function(file) {
-			var dataFile = util.replaceExtension(file.path, '.data.js'),
+			var content = file.contents.toString(),
+				dataFile = util.replaceExtension(file.path, '.data.js'),
 				data = (function() {
 					try {
 						return requireNew(dataFile);
@@ -83,47 +87,45 @@ gulp.task(taskName, function(cb) {
 					}
 				})(),
 
-				moduleTemplate,
 				mergedData;
 
-			// Precompile module demo and variants
-			if (file.path.indexOf(path.sep + 'modules' + path.sep) !== -1) {
-				moduleTemplate = file.contents.toString();
-				modulePreviewTemplate = modulePreviewTemplate || fs.readFileSync(taskConfig.srcModulePreview, 'utf8');
+			// Render template
+			try {
+				// Precompile module demo and variants
+				if (file.path.indexOf(path.sep + 'modules' + path.sep) !== -1) {
+					modulePreviewTemplate = modulePreviewTemplate || fs.readFileSync(taskConfig.srcModulePreview, 'utf8');
 
-				data.demo = Handlebars.compile(moduleTemplate)(data);
+					data.demo = helpers.twig.render(content, data);
 
-				// Compile variants
-				if (data.variants) {
-					data.variants = data.variants.map(function(variant) {
-						variant.demo = Handlebars.compile(moduleTemplate)(variant);
+					// Compile variants
+					if (data.variants) {
+						data.variants = data.variants.map(function(variant) {
+							variant.demo = helpers.twig.render(content, variant);
+						});
 
-						return variant;
-					});
-
-					mergedData = _.extend({}, _.omit(data, ['project', 'env', 'meta', 'variants']), {
-							meta: {
-								title: 'Default',
-								desc: 'Default implemention.'
+						mergedData = _.extend({}, _.omit(data, ['project', 'env', 'meta', 'variants']), {
+								meta: {
+									title: 'Default',
+									desc: 'Default implemention.'
+								}
 							}
-						}
-					);
-					data.variants.unshift(mergedData);
+						);
+
+						data.variants.unshift(mergedData);
+					}
+
+					// Replace file content with preview template
+					content = modulePreviewTemplate;
 				}
 
-				// Replace file content with preview template
-				file.contents = new Buffer(modulePreviewTemplate);
-			}
+				file.contents = new Buffer(helpers.twig.render(content, data));
+			} catch (err) {
+				helpers.errors({
+					task: taskName,
+					message: 'Error rendering "' + path.relative('./', file.path) + '": ' + err
 
-			// Save data by file name
-			file.data = data;
-		}))
-		.pipe(plumber())
-		.pipe(handlebars({
-			partials: taskConfig.partials,
-			bustCache: true,
-			dataEach: function(context, file) {
-				return file.data;
+					// stack: err.stack
+				});
 			}
 		}).on('error', helpers.errors))
 

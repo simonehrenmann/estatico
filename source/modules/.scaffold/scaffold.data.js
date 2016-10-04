@@ -8,7 +8,7 @@ var _ = require('lodash'),
 var data = _.merge(defaultData, {
 		meta: {
 			title: '{{originalName}}',
-			code: dataHelper.getTemplateCode('{{name}}.hbs'),
+			code: dataHelper.getTemplateCode('{{name}}.twig'),
 			documentation: dataHelper.getDocumentation('{{name}}.md')
 		}
 	});
